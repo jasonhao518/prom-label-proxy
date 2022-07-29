@@ -296,7 +296,11 @@ func (r *routes) enforceLabel(h http.HandlerFunc) http.Handler {
 // sent through a URL parameter.
 // It returns an error when either the value is found in both places, or is not found at all.
 func (r *routes) getLabelValue(req *http.Request) (string, error) {
-	formValue := req.FormValue(r.label)
+	formValue := req.Header.Get(r.label)
+	if formValue == "" {
+		formValue = req.FormValue(r.label)
+	}
+	fmt.Println("Hello World", formValue)
 	if r.labelValue != "" && formValue != "" {
 		return "", fmt.Errorf("a static value for the %s label has already been specified", r.label)
 	}
